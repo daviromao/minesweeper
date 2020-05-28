@@ -72,8 +72,5 @@ function renderGrid(){
   console.log(grid);
 }
 
-function map2(A, func){
-
-}
-
 start();
+
