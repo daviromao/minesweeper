@@ -86,6 +86,8 @@ function renderGrid(){
     for(let column = 0; column < width; column++){
       html += `<td id="cell${String(column)+String(row)}" 
       onClick="clickedCell(this)"
+      onMouseOver="mouseOverCell(this)"
+      onMouseOut="mouseOutCell(this)"
       />`;
     }
     html +='</tr>';
