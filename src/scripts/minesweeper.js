@@ -84,26 +84,61 @@ function renderGrid(){
     html +='<tr>';
 
     for(let column = 0; column < width; column++){
-      html += `<td id="${String(column)+String(row)}" onClick="clickedCell(this)"/>`;
+      html += `<td id="cell${String(column)+String(row)}" 
+      onClick="clickedCell(this)"
+      />`;
     }
     html +='</tr>';
   }
-
   html +='</table>';
 
   document.querySelector('div.fireCanvas').innerHTML = html;
 }
 
-function clickedCell(thisCell){
-  const x = parseInt(thisCell.id[0]);
-  const y = parseInt(thisCell.id[1])
+function clickedCell(cell){
+  const x = parseInt(cell.id[4]);
+  const y = parseInt(cell.id[5])
 
   if(!initialized) startGame(x, y);
 
-  thisCell.className = 'clicked';
-  thisCell.innerHTML = grid[y][x];
+  floodFill(cell, x, y) ;
+  revealCell(cell, x, y);
 
   initialized = true;
+}
+
+function floodFill(cell, x, y){
+  if (grid[y][x] == 0 && !cell.className){
+    revealCell(cell, x, y);
+
+    if(x > 0){
+      let nextCell = document.querySelector(`#cell${x-1}${y}`);
+      floodFill(nextCell, x-1, y);
+    }
+
+    if(x < width - 1 ){
+      let nextCell = document.querySelector(`#cell${x+1}${y}`);
+      floodFill(nextCell, x+1, y);
+    }
+
+    if(y > 0){
+      let nextCell = document.querySelector(`#cell${x}${y-1}`);
+      floodFill(nextCell, x, y-1);
+    }
+
+    if(y < height - 1 ){
+      let nextCell = document.querySelector(`#cell${x}${y+1}`);
+      floodFill(nextCell, x, y+1);
+    }
+  }else if(grid[y][x] > 0){
+    revealCell(cell, x, y);
+  }
+
+}
+
+function revealCell(cell, x, y){
+  cell.className = 'clicked';
+  cell.innerHTML = grid[y][x] == 0 ? '' : grid[y][x];
 }
 
 renderGrid();
