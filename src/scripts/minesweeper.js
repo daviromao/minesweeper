@@ -4,14 +4,12 @@ const totalMines = 10;
 
 let grid = [];
 let initialized = false;
+let gameOver = false;
 
 function startGame(safeX, safeY){
   createGridDataStructure();
   shuffleGrid(safeX, safeY);
   countAdjacentPlaces();
-
-  console.log(grid);
-
 }
 
 function createGridDataStructure(){
@@ -38,7 +36,7 @@ function shuffleGrid(safeX, safeY){
   }
 
   function isSafe(){
-    safe = ![x, x-1, x+1].includes(safeX) || ![y, y-1, y+1].includes(safeY);
+    const safe = ![x, x-1, x+1].includes(safeX) || ![y, y-1, y+1].includes(safeY)
     return safe;
   }
 
@@ -84,28 +82,36 @@ function renderGrid(){
     html +='<tr>';
 
     for(let column = 0; column < width; column++){
-      html += `<td id="cell${String(column)+String(row)}" 
-      onClick="clickedCell(this)"
-      onMouseOver="mouseOverCell(this)"
-      onMouseOut="mouseOutCell(this)"
+      html +=
+      `<td id="cell${String(column)}-${String(row)}"" 
+        onClick="clickedCell(this)"
       />`;
     }
     html +='</tr>';
   }
   html +='</table>';
-
+  initialized = false;
   document.querySelector('div.fireCanvas').innerHTML = html;
+  document.querySelector('h1').innerHTML = "💣 Minesweeper 💣";
 }
 
 function clickedCell(cell){
-  const x = parseInt(cell.id[4]);
-  const y = parseInt(cell.id[5])
+  const coords = cell.id.slice(4).split('-')
+  const x = parseInt(coords[0]);
+  const y = parseInt(coords[1]);
 
   if(!initialized) startGame(x, y);
 
   floodFill(cell, x, y) ;
   revealCell(cell, x, y);
 
+  if(grid[y][x] == -1){
+    gameOver = true;
+    revealAll();
+    document.querySelector('h1').innerHTML = "💣 Gameover 💣";
+  }
+
+  gameOver = true;
   initialized = true;
 }
 
@@ -114,22 +120,22 @@ function floodFill(cell, x, y){
     revealCell(cell, x, y);
 
     if(x > 0){
-      let nextCell = document.querySelector(`#cell${x-1}${y}`);
+      let nextCell = document.querySelector(`#cell${x-1}-${y}`);
       floodFill(nextCell, x-1, y);
     }
 
     if(x < width - 1 ){
-      let nextCell = document.querySelector(`#cell${x+1}${y}`);
+      let nextCell = document.querySelector(`#cell${x+1}-${y}`);
       floodFill(nextCell, x+1, y);
     }
 
     if(y > 0){
-      let nextCell = document.querySelector(`#cell${x}${y-1}`);
+      let nextCell = document.querySelector(`#cell${x}-${y-1}`);
       floodFill(nextCell, x, y-1);
     }
 
     if(y < height - 1 ){
-      let nextCell = document.querySelector(`#cell${x}${y+1}`);
+      let nextCell = document.querySelector(`#cell${x}-${y+1}`);
       floodFill(nextCell, x, y+1);
     }
   }else if(grid[y][x] > 0){
@@ -140,7 +146,24 @@ function floodFill(cell, x, y){
 
 function revealCell(cell, x, y){
   cell.className = 'clicked';
-  cell.innerHTML = grid[y][x] == 0 ? '' : grid[y][x];
+
+  if(grid[y][x] == -1){
+    cell.innerHTML = '💣';
+  }else if(grid[y][x] > 0){
+    cell.innerHTML = grid[y][x];
+  }
+
+}
+
+function revealAll(){
+  for(let row = 0; row < height; row++){
+    for(let column = 0; column < width; column++){
+      let cell = document.querySelector(`#cell${column}-${row}`);
+      if(grid[row][column] == -1){
+        revealCell(cell, column, row);
+      }
+    }
+  }
 }
 
 renderGrid();
