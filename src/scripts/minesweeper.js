@@ -5,6 +5,7 @@ const totalMines = 10;
 let grid = [];
 let initialized = false;
 let gameOver = false;
+let countOfRevealedCells = 0;
 
 function startGame(safeX, safeY){
   createGridDataStructure();
@@ -90,7 +91,11 @@ function renderGrid(){
     html +='</tr>';
   }
   html +='</table>';
+
   initialized = false;
+  gameOver = false;
+  countOfRevealedCells = 0;
+
   document.querySelector('div.fireCanvas').innerHTML = html;
   document.querySelector('h1').innerHTML = "💣 Minesweeper 💣";
 }
@@ -109,9 +114,12 @@ function clickedCell(cell){
     gameOver = true;
     revealAll();
     document.querySelector('h1').innerHTML = "💣 Gameover 💣";
+  } else if(countOfRevealedCells == (width * height) - totalMines){
+    gameOver = true;
+    document.querySelector('h1').innerHTML = "🎉 You won! 🎉";
   }
 
-  gameOver = true;
+  gameOver = false;
   initialized = true;
 }
 
@@ -145,6 +153,7 @@ function floodFill(cell, x, y){
 }
 
 function revealCell(cell, x, y){
+  if(cell.className) return;
   cell.className = 'clicked';
 
   if(grid[y][x] == -1){
@@ -153,6 +162,7 @@ function revealCell(cell, x, y){
     cell.innerHTML = grid[y][x];
   }
 
+  countOfRevealedCells++;
 }
 
 function revealAll(){
