@@ -1,8 +1,15 @@
+body{
+  margin: 0px;
+  padding: 0px;
+  background-color: #1C1621;
+}
+
 div.container{
+  min-width: 340px;
   width: 100vw;
   height: 100vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
@@ -15,22 +22,40 @@ table{
   border-spacing	: 0px;
 }
 
+h1{
+  color: #fff;
+  font-family: monospace;
+}
+
+button{
+  padding: 10px 50px;
+  margin: 15px;
+  font-family: monospace;
+  cursor: pointer;
+  background-color: #40006F;
+  border: 0px;
+  border-radius: 5px;
+  color: #fff;
+}
+
 td{
   width: 40px;
   height: 40px;
-  border		: 2px outset rgb(255, 117, 117);
+  border: 2px outset #533566;
   text-align: center;
   font-family: monospace;
   font-size: 16px;
+  cursor: pointer;
+  background-color: #40006F;
+  color	: #40006F;
+}
 
-  background-color: #999;
-  color	: #999;
+td:hover{
+  background-color: #36005D;
+  border: 2px outset #533566;
 }
 
 td.clicked{
-  background-color: #ddd;
-}
-
-body{
-  margin: 0px;
+  background-color: #D1CDD4;
+  cursor: default;
 }
