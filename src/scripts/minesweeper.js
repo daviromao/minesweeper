@@ -2,10 +2,20 @@ const height = 11;
 const width = 7;
 const totalMines = 10;
 
-let grid = [];
-let initialized = false;
-let gameOver = false;
-let countOfRevealedCells = 0;
+let grid;
+let initialized;
+let gameOver;
+let countOfRevealedCells;
+
+function setup(){
+  grid = [];
+  initialized = false;
+  gameOver = false;
+  countOfRevealedCells = 0;
+
+  document.querySelector('h1').innerHTML = "💣 Minesweeper 💣";
+  renderGrid();
+}
 
 function startGame(safeX, safeY){
   createGridDataStructure();
@@ -84,23 +94,23 @@ function renderGrid(){
 
     for(let column = 0; column < width; column++){
       html +=
-      `<td id="cell${String(column)}-${String(row)}"" 
-        onClick="clickedCell(this)"
+      `<td
+        id="cell${String(column)}-${String(row)}""
+        onClick="handleClick(this)"
       />`;
     }
     html +='</tr>';
   }
   html +='</table>';
 
-  initialized = false;
-  gameOver = false;
-  countOfRevealedCells = 0;
-
   document.querySelector('div.fireCanvas').innerHTML = html;
-  document.querySelector('h1').innerHTML = "💣 Minesweeper 💣";
 }
 
-function clickedCell(cell){
+function handleClick(cell){
+  if(gameOver) return;
+
+  if(gameOver) return;
+
   const coords = cell.id.slice(4).split('-')
   const x = parseInt(coords[0]);
   const y = parseInt(coords[1]);
@@ -111,16 +121,23 @@ function clickedCell(cell){
   revealCell(cell, x, y);
 
   if(grid[y][x] == -1){
+    handleGameOver();
+  } else if(countOfRevealedCells == (width * height) - totalMines){
+    handleGameWon();
+  }
+
+  initialized = true;
+
+  function handleGameOver(){
     gameOver = true;
     revealAll();
     document.querySelector('h1').innerHTML = "💣 Gameover 💣";
-  } else if(countOfRevealedCells == (width * height) - totalMines){
+  }
+
+  function handleGameWon(){
     gameOver = true;
     document.querySelector('h1').innerHTML = "🎉 You won! 🎉";
   }
-
-  gameOver = false;
-  initialized = true;
 }
 
 function floodFill(cell, x, y){
@@ -176,4 +193,4 @@ function revealAll(){
   }
 }
 
-renderGrid();
+setup();
